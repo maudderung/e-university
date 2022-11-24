@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>E-uni Grade</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{${@environment.getProperty('address.manager')}+'courses'}">Courses</a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'grades'}">Grades</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'students'}">Student
+                        Info</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>E-University</h1>
+    <hr>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h3>Students Info</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#searchBar"
+                    aria-controls="searchBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse d-flex flex-row-reverse " id="searchBar">
+                <form class="d-flex" role="search" align="right" action="#" th:action="@{/euni/students}" th:object="${paramsObj}" method="get">
+                    <input class="form-control p-2" type="text" placeholder="Search student name" aria-label="Search"
+                           th:field="*{name}">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col" class="justify-content-md-center">View</th>
+            <th scope="col">#</th>
+            <th scope="col">Student Name</th>
+            <th scope="col">Fac Num.</th>
+            <th scope="col">Graduation year</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${studentsList.isEmpty()}">
+            <td colspan="2"> No Students Available</td>
+        </tr>
+        <tr th:each="student, iterStat  : ${studentsList}">
+
+            <td><span>
+                <form action="#" th:action="@{/euni/students/info}" th:object="${student}" method="get">
+                <input type="hidden" th:value="${student.getFirstName()}" id="firstName1" th:attr="name='firstName'"/>
+                <input type="hidden" th:value="${student.getLastName()}" id="lastName1" th:attr="name='lastName'"/>
+                <input type="hidden" th:value="${student.getFacNum()}" id="facNum1" th:attr="name='facNum'"/>
+                <input type="hidden" th:value="${student.getGradYear()}" id="gradYear1" th:attr="name='gradYear'"/>
+                <button type="submit" class="btn btn-primary">View</button>
+                </form>
+            </span></td>
+
+            <td><span th:text="(${currentPage}-1)*50+${iterStat.count}"> # </span></td>
+            <td><span
+                    th:text="${student.getFirstName() + ' ' + student.getLastName()}"> Student Name </span>
+            </td>
+            <td><span th:text="${student.getFacNum()}"> Fac Num </span></td>
+            <td><span th:text="${student.getGradYear()}"> Graduation year </span></td>
+
+            <td><span>
+                <div class="container">
+                  <div class="row">
+                    <div class="col justify-content-md-center">
+                        <form action="#" th:action="@{/euni/students/edit}" th:object="${student}" method="post">
+                            <input type="hidden" th:value="${student.getFirstName()}" id="firstName" th:attr="name='firstName'"/>
+                            <input type="hidden" th:value="${student.getLastName()}" id="lastName" th:attr="name='lastName'"/>
+                            <input type="hidden" th:value="${student.getFacNum()}" id="facNum" th:attr="name='facNum'"/>
+                            <input type="hidden" th:value="${student.getGradYear()}" id="gradYear" th:attr="name='gradYear'"/>
+                            <input type="hidden" th:value="${forUpdate}" id="forUpdate" th:attr="name='forUpdate'"/>
+
+                        <button type="submit" class="btn btn-warning block w-100">  Edit  </button>
+                    </form>
+                    </div>
+                    <div class="col justify-content-md-center">
+                           <!-- <form action="#" th:action="@{/euni/students/delete}" th:object="${grade}" method="post">
+                                <input type="hidden" th:value="${grade.grade_id}" name="gradeId1" id="gradeId1"/>
+                            <input type="hidden" th:value="${grade.student_firstName}" id="student_firstName1" th:attr="name='student_firstName'"/>
+                            <input type="hidden" th:value="${grade.student_lastName}" id="student_lastName1" th:attr="name='student_lastName'"/>
+                            <input type="hidden" th:value="${grade.student_fac_num}" id="student_fac_num1" th:attr="name='student_fac_num'"/>
+                            <input type="hidden" th:value="${grade.courseName}" name="courseName" id="courseName1"/>
+                            <input type="hidden" th:value="${grade.teacher_firstName}" id="teacher_firstName1" th:attr="name='teacher_firstName'"/>
+                            <input type="hidden" th:value="${grade.teacher_lastName}" id="teacher_lastName1"  th:attr="name='teacher_lastName'"/>
+                            <input type="hidden" th:value="${grade.grade}" id="grade1" name="grade"/>
+                            <input type="hidden" th:value="${grade.date}" id="date1" name="date"/>
+                             <input type="hidden" th:value="${grade.forUpdate}" id="forupdate1" th:attr="name='forUpdate'"/>-->
+
+                            <button type="submit" class="btn btn-danger block w-100" text>Delete</button>
+                            </form>
+
+                    </div>
+                  </div>
+                </div>
+            </span>
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+
+    <hr>
+
+</div>
+
+<footer style="font-size: large" class="panel-footer">
+
+    <div class="m-2">
+        <nav aria-label="Page navigation example" th:marginwidth="10px" th:object="${paramsObj}">
+            <ul class="pagination justify-content-end">
+
+                <li class="page-item" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{/euni/students(name=*{name},page=${currentPage - 1})}" tabindex="-1">Previous</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == 1}">
+                    <a class="page-link" tabindex="-1">Previous</a>
+                </li>
+
+
+                <li class="page-item" th:if="${totalPages>1}" th:each="pageNum: ${#numbers.sequence(1, totalPages)}">
+                    <a class="page-link" th:href="@{/euni/students(name=*{name},page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${totalPages==1}">
+                    <a class="page-link"
+                       th:href="@{/euni/students(name=*{name},page=${totalPages})}">[[${totalPages}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${currentPage < totalPages}">
+                    <a class="page-link" th:href="@{/euni/students(name=*{name},page=${currentPage + 1})}">Next</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == totalPages}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+
+</footer>
+</body>
+</html>

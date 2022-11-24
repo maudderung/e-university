@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>E-uni Grade</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'index'}">Home</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'courses'}">Courses</a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'grades'}">Grades</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'students'}">Student Info</a>
+            </li>
+
+        </ul>
+    </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>E-University</h1>
+    <hr>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h3>Grade</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#searchBar" aria-controls="searchBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse d-flex flex-row-reverse " id="searchBar">
+                <form class="d-flex" role="search" align="right" action="#" th:action="@{/euni/grades/search}" th:object="${paramsObj}" method="get">
+                    <input class="form-control p-2" type="text" placeholder="Search student name" aria-label="Search" th:field="*{name}">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Student Name</th>
+            <th scope="col">Fac Num.</th>
+            <th scope="col">Course</th>
+            <th scope="col">Teacher Name</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${gradesList.isEmpty()}">
+            <td colspan="2"> No Grades Available </td>
+        </tr>
+        <tr th:each="grade : ${gradesList}">
+            <td><span th:text="${grade.getGrade_id()}"> # </span></td>
+            <td><span th:text="${grade.getStudent_firstName() + ' ' + grade.getStudent_lastName()}"> Student Name </span></td>
+            <td><span th:text="${grade.getStudent_fac_num()}"> Fac Num </span></td>
+            <td><span th:text="${grade.getCourseName()}"> Course </span></td>
+            <td><span th:text="${grade.getTeacher_firstName() + ' ' +  grade.getTeacher_lastName()}"> Teacher Name </span></td>
+            <td><span th:text="${grade.getGrade()}"> Grade </span></td>
+            <td><span th:text="${grade.getDate()}"> Date </span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+</div>
+
+<footer style="font-size: large" class="panel-footer">
+
+<div class="m-2">
+    <nav aria-label="Page navigation example" th:marginwidth="10px" th:object="${paramsObj}">
+        <ul class="pagination justify-content-end">
+
+            <li class="page-item" th:if="${currentPage > 1}">
+                <a class="page-link" th:href="@{/euni/grades/search(page=${currentPage - 1},name=*{name})}" tabindex="-1">Previous</a>
+            </li>
+
+            <li class="page-item disabled" th:if="${currentPage == 1}">
+                <a class="page-link" tabindex="-1">Previous</a>
+            </li>
+
+
+            <li class="page-item" th:if="${totalPages>1}" th:each="pageNum: ${#numbers.sequence(1, totalPages)}">
+                <a class="page-link" th:href="@{/euni/grades/search(page=${pageNum},name=*{name})}">[[${pageNum}]]</a>
+            </li>
+
+            <li class="page-item" th:if="${totalPages==1}" >
+                <a class="page-link" th:href="@{/euni/grades/search(page=${totalPages},name=*{name})}">[[${totalPages}]]</a>
+            </li>
+
+            <li class="page-item" th:if="${currentPage < totalPages}" >
+                <a class="page-link" th:href="@{/euni/grades/search(page=${currentPage + 1},name=*{name})}">Next</a>
+            </li>
+
+            <li class="page-item disabled" th:if="${currentPage == totalPages}">
+                <a class="page-link" >Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+</footer>
+</body>
+</html>

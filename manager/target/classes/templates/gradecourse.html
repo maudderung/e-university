@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>E-uni Grade</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{${@environment.getProperty('address.manager')}+'courses'}">Courses</a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'grades'}">Grades</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'students'}">Student
+                        Info</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>E-University</h1>
+    <hr>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h3>Grade</h3>
+            <h3 th:inline="text">[[${student.getFirstName()}]] [[${student.getLastName()}]], Fac.num: [[${student.getFacNum()}]]</h3>
+        </div>
+    </nav>
+
+
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Course</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Date</th>
+            <th scope="col">Teacher Name</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${gradesList.isEmpty()}">
+            <td colspan="2"> No Grades Available</td>
+        </tr>
+        <tr th:each="grade ,iterStat : ${gradesList}">
+            <td><span th:text="(${currentPage}-1)*50+${iterStat.count}"> #</span></td>
+            <td><span th:text="${grade.getCoursename()}"> Course </span></td>
+            <td><span th:text="${grade.getGrade()}"> Grade </span></td>
+            <td><span th:text="${grade.getDate()}"> Date </span></td>
+            <td><span th:text="${grade.getTeacherFname() + ' ' +  grade.getTeacherLname()}"> Teacher Name </span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+</div>
+
+<footer style="font-size: large" class="panel-footer">
+
+    <div class="m-2">
+        <nav aria-label="Page navigation example" th:marginwidth="10px">
+            <ul class="pagination justify-content-end">
+
+                <li class="page-item" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{/euni/grades(page=${currentPage - 1})}" tabindex="-1">Previous</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == 1}">
+                    <a class="page-link" tabindex="-1">Previous</a>
+                </li>
+
+
+                <li class="page-item" th:if="${totalPages>1}" th:each="pageNum: ${#numbers.sequence(1, totalPages)}">
+                    <a class="page-link" th:href="@{/euni/grades(page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${totalPages==1}">
+                    <a class="page-link"
+                       th:href="@{/euni/grades(page=${totalPages})}">[[${totalPages}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${currentPage < totalPages}">
+                    <a class="page-link" th:href="@{/euni/grades(page=${currentPage + 1})}">Next</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == totalPages}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+
+</footer>
+</body>
+</html>

@@ -1,0 +1,22 @@
+package com.euniversity.manager.model.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Teacher {
+
+    long teacherid;
+
+    String firstname;
+
+    String lastname;
+
+    String degree;
+}

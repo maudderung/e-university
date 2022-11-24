@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>E-uni Grade</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{${@environment.getProperty('address.manager')}+'courses'}">Courses</a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'grades'}">Grades</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{${@environment.getProperty('address.manager')}+'students'}">Student
+                        Info</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>E-University</h1>
+    <hr>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h3>Courses Info</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#searchBar"
+                    aria-controls="searchBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse d-flex flex-row-reverse " id="searchBar">
+                <form class="d-flex" role="search" align="right" action="#" th:action="@{/euni/courses}" th:object="${paramsObj}" method="get">
+                    <input class="form-control p-2" type="text" placeholder="Search course name" aria-label="Search"
+                           th:field="*{name}">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+
+    <p th:if="${deleted==true && actionDelete==true}" class="text-success">Successfully deleted.</p>
+    <p th:if="${deleted==false && actionDelete==true}" class="text-danger">Can't delete course with students.</p>
+
+
+    <table class="table">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col" class="justify-content-md-center">View</th>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Enrolled</th>
+            <th scope="col">Max Capacity</th>
+            <th scope="col">Course ID</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${coursesList.isEmpty()}">
+            <td colspan="2"> No Courses Available</td>
+        </tr>
+        <tr th:each="course, iterStat  : ${coursesList}">
+
+            <td><span>
+                <form action="#" th:action="@{/euni/courses/info}" th:object="${course}" method="get">
+                <input type="hidden" th:value="${course.getCourseid()}" id="courseid" th:attr="name='courseid'"/>
+                            <input type="hidden" th:value="${course.getName()}" id="name" th:attr="name='name'"/>
+                            <input type="hidden" th:value="${course.getTotalEnrolled()}" id="totalEnrolled" th:attr="name='totalEnrolled'"/>
+                            <input type="hidden" th:value="${course.getMaxcapacity()}" id="maxcapacity" th:attr="name='maxcapacity'"/>
+
+                <button type="submit" class="btn btn-primary">View</button>
+                </form>
+            </span></td>
+
+            <td><span th:text="(${currentPage}-1)*50+${iterStat.count}"> # </span></td>
+            <td><span th:text="${course.getName()}"> Name </span></td>
+            <td><span th:text="${course.getTotalEnrolled()}"> Enrolled </span></td>
+            <td><span th:text="${course.getMaxcapacity()}"> Max Capacity </span></td>
+            <td><span th:text="${course.getCourseid()}"> Course ID </span></td>
+
+
+            <td><span>
+                <div class="container">
+                  <div class="row">
+                    <div class="col justify-content-md-center">
+                        <form action="#" th:action="@{/euni/courses/edit}" th:object="${course}" method="post">
+                            <input type="hidden" th:value="${course.getCourseid()}" id="courseid1" th:attr="name='courseid'"/>
+                            <input type="hidden" th:value="${course.getName()}" id="name1" th:attr="name='name'"/>
+                            <input type="hidden" th:value="${course.getTotalEnrolled()}" id="totalEnrolled1" th:attr="name='totalEnrolled'"/>
+                            <input type="hidden" th:value="${course.getMaxcapacity()}" id="maxcapacity1" th:attr="name='maxcapacity'"/>
+                           <!-- <input type="hidden" th:value="${}" id="forUpdate" th:attr="name='forUpdate'"/> -->
+
+                        <button type="submit" class="btn btn-warning block w-100">  Edit  </button>
+                    </form>
+                    </div>
+                    <div class="col justify-content-md-center">
+                            <form action="#" th:action="@{/euni/courses/delete}" th:object="${course}"  method="post">
+                            <input type="hidden" th:value="${course.getCourseid()}" id="courseid2" th:attr="name='courseid'"/>
+
+
+                            <button type="submit" class="btn btn-danger block w-100" text>Delete</button>
+                        </form>
+
+                    </div>
+                  </div>
+                </div>
+            </span>
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+
+    <hr>
+
+</div>
+
+<footer style="font-size: large" class="panel-footer">
+
+    <div class="m-2">
+        <nav aria-label="Page navigation example" th:marginwidth="10px" th:object="${paramsObj}">
+            <ul class="pagination justify-content-end">
+
+                <li class="page-item" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{/euni/courses(name=*{name},page=${currentPage - 1})}" tabindex="-1">Previous</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == 1}">
+                    <a class="page-link" tabindex="-1">Previous</a>
+                </li>
+
+
+                <li class="page-item" th:if="${totalPages>1}" th:each="pageNum: ${#numbers.sequence(1, totalPages)}">
+                    <a class="page-link" th:href="@{/euni/courses(name=*{name},page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${totalPages==1}">
+                    <a class="page-link"
+                       th:href="@{/euni/courses(name=*{name},page=${totalPages})}">[[${totalPages}]]</a>
+                </li>
+
+                <li class="page-item" th:if="${currentPage < totalPages}">
+                    <a class="page-link" th:href="@{/euni/courses(name=*{name},page=${currentPage + 1})}">Next</a>
+                </li>
+
+                <li class="page-item disabled" th:if="${currentPage == totalPages}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+
+</footer>
+</body>
+</html>
